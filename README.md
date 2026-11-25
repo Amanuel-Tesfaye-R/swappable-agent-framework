@@ -37,12 +37,18 @@ This framework separates the runtime into two isolated layers:
 
 ## Installation
 
+### Install via GitHub Packages (npm)
+
 ```bash
-# Configure GitHub Packages scope once, then install
-npm install @amanuel-tesfaye-r/swappable-agent-framework --registry=https://npm.pkg.github.com
+# Point the owner scope to GitHub Packages (or add to .npmrc)
+echo "@amanuel-tesfaye-r:registry=https://npm.pkg.github.com" >> .npmrc
+
+npm install @amanuel-tesfaye-r/swappable-agent-framework
 ```
 
-Or clone and build from source:
+*(Or run directly without editing `.npmrc`: `npm install @amanuel-tesfaye-r/swappable-agent-framework --registry=https://npm.pkg.github.com`)*
+
+### Or Clone & Build from Source
 
 ```bash
 git clone https://github.com/Amanuel-Tesfaye-R/swappable-agent-framework.git
@@ -85,7 +91,7 @@ npx saf ask "Audit the authentication middleware." --session audit-1
 ## SDK Quickstart
 
 ```typescript
-import { PowerSourceRouter, SessionStore } from "swappable-agent-framework";
+import { PowerSourceRouter, SessionStore } from "@amanuel-tesfaye-r/swappable-agent-framework";
 import config from "./examples/config/agent.config.json" assert { type: "json" };
 
 const sessions = new SessionStore("./.saf-sessions");
