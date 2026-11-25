@@ -1,5 +1,5 @@
 {
-  "name": "swappable-agent-framework",
+  "name": "@amanuel-tesfaye-r/swappable-agent-framework",
   "version": "1.0.0",
   "description": "TypeScript SDK, CLI, and specification framework for decoupled AI agents with swappable LLM power sources and persistent identity.",
   "type": "module",
@@ -18,8 +18,12 @@
     "dist",
     "specs",
     "blueprints",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",

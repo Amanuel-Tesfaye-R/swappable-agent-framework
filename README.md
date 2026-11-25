@@ -38,7 +38,8 @@ This framework separates the runtime into two isolated layers:
 ## Installation
 
 ```bash
-npm install swappable-agent-framework
+# Configure GitHub Packages scope once, then install
+npm install @amanuel-tesfaye-r/swappable-agent-framework --registry=https://npm.pkg.github.com
 ```
 
 Or clone and build from source:
