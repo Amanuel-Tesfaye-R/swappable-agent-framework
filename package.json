@@ -1,16 +1,43 @@
 {
   "name": "swappable-agent-framework",
   "version": "1.0.0",
-  "description": "Architectural framework and blueprint specifications for decoupled AI agents, swappable LLM power sources, and persistent identity.",
+  "description": "TypeScript SDK, CLI, and specification framework for decoupled AI agents with swappable LLM power sources and persistent identity.",
   "type": "module",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    }
+  },
+  "bin": {
+    "saf": "./dist/src/cli.js"
+  },
+  "files": [
+    "dist",
+    "specs",
+    "blueprints",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run build && node --test dist/tests/*.test.js",
+    "start": "node dist/src/cli.js",
+    "clean": "node -e \"import('node:fs').then(fs => fs.rmSync('dist', { recursive: true, force: true }))\""
+  },
   "keywords": [
     "ai",
     "agents",
-    "architecture",
-    "blueprints",
+    "sdk",
+    "cli",
+    "llm-router",
     "power-source-principle",
-    "llm",
-    "decoupled-agents"
+    "anthropic",
+    "gemini",
+    "openai",
+    "ollama"
   ],
   "author": "Aman Tesfaye <https://github.com/Amanuel-Tesfaye-R>",
   "license": "MIT",
@@ -21,5 +48,12 @@
   "bugs": {
     "url": "https://github.com/Amanuel-Tesfaye-R/swappable-agent-framework/issues"
   },
-  "homepage": "https://github.com/Amanuel-Tesfaye-R/swappable-agent-framework#readme"
+  "homepage": "https://github.com/Amanuel-Tesfaye-R/swappable-agent-framework#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  }
 }

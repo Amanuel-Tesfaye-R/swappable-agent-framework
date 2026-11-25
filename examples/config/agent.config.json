@@ -1,36 +1,41 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
   "agent": {
     "name": "CoPilot",
     "version": "1.0.0",
     "activeProvider": "anthropic",
+    "fallbackOrder": ["google", "openai", "ollama"],
+    "antiBleedShield": true,
+    "contracts": {
+      "identity": "../../specs/SOUL_SPEC.md",
+      "agents": "../../specs/AGENTS_SPEC.md"
+    },
     "providers": {
       "anthropic": {
+        "kind": "anthropic",
         "model": "claude-3-5-sonnet-20241022",
+        "apiKeyEnv": "ANTHROPIC_API_KEY",
         "temperature": 0.2,
         "maxTokens": 8192
       },
       "google": {
+        "kind": "google",
         "model": "gemini-2.0-flash",
+        "apiKeyEnv": "GEMINI_API_KEY",
         "temperature": 0.2,
         "maxTokens": 8192
       },
       "openai": {
+        "kind": "openai",
         "model": "gpt-4o",
+        "apiKeyEnv": "OPENAI_API_KEY",
         "temperature": 0.2,
         "maxTokens": 4096
       },
       "ollama": {
+        "kind": "ollama",
         "model": "qwen2.5-coder:32b",
         "baseURL": "http://localhost:11434"
       }
-    },
-    "contracts": {
-      "soul": "./specs/SOUL.md",
-      "identity": "./specs/IDENTITY.md",
-      "system": "./specs/SYSTEM.md",
-      "user": "./specs/USER.md",
-      "agents": "./specs/AGENTS.md"
     }
   }
 }
