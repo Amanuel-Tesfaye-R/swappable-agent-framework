@@ -146,8 +146,19 @@ Beyond the core SDK, `blueprints/` documents the complete 10-part architecture f
 
 ---
 
-## Contributing & License
+## Contributing
 
-Pull requests for additional provider adapters (Mistral, Bedrock, Cohere), streaming parsers, and blueprint extensions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Pull requests for additional provider adapters (Mistral, Bedrock, Cohere), streaming parsers, and blueprint extensions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and PR guidelines.
 
-Released under the [MIT License](LICENSE).
+---
+
+## License
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-2563eb?style=for-the-badge&labelColor=0f172a)](LICENSE)
+
+Copyright © 2026 **Amanuel Tesfaye**.  
+Open-source software distributed under the terms of the [MIT License](LICENSE).
+
+| Permissions | Conditions | Limitations |
+| :--- | :--- | :--- |
+| Commercial use, modification, distribution, and private use | License and copyright notice must be included | No liability or warranty |
