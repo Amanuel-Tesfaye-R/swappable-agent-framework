@@ -1,0 +1,25 @@
+{
+  "name": "swappable-agent-framework",
+  "version": "1.0.0",
+  "description": "Architectural framework and blueprint specifications for decoupled AI agents, swappable LLM power sources, and persistent identity.",
+  "type": "module",
+  "keywords": [
+    "ai",
+    "agents",
+    "architecture",
+    "blueprints",
+    "power-source-principle",
+    "llm",
+    "decoupled-agents"
+  ],
+  "author": "Aman Tesfaye <https://github.com/Amanuel-Tesfaye-R>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Amanuel-Tesfaye-R/swappable-agent-framework.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Amanuel-Tesfaye-R/swappable-agent-framework/issues"
+  },
+  "homepage": "https://github.com/Amanuel-Tesfaye-R/swappable-agent-framework#readme"
+}
