@@ -1,8 +1,11 @@
 # Swappable Agent Framework
 
+![Swappable Agent Framework: Decouple foundation LLMs from persistent identity](.github/social-preview.png)
+
 [![CI](https://github.com/Amanuel-Tesfaye-R/swappable-agent-framework/actions/workflows/ci.yml/badge.svg)](https://github.com/Amanuel-Tesfaye-R/swappable-agent-framework/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 Installable TypeScript SDK, CLI (`saf`), and architectural blueprint suite for building autonomous AI agents where foundation LLMs act as swappable cognitive power sources.
@@ -17,20 +20,21 @@ Conventional agent systems couple identity, behavior rules, and memory to one ve
 
 This framework separates the runtime into two isolated layers:
 
-```
-  +-----------------------------------------------------------+
-  |                   PERSISTENT VESSEL                       |
-  |  - Contract Compiler (IDENTITY, SOUL, SYSTEM, AGENTS)     |
-  |  - Anti-Bleed Identity Shield                             |
-  |  - Model-Agnostic SessionStore (History & Token Ledger)   |
-  +-----------------------------------------------------------+
-                               ^
-                               | supplies cognitive thrust
-                               v
-  +-----------------------------------------------------------+
-  |              SWAPPABLE POWER SOURCE (LLM)                 |
-  |   [ Claude ] <---> [ Gemini ] <---> [ OpenAI / Ollama ]   |
-  +-----------------------------------------------------------+
+```mermaid
+flowchart TD
+    subgraph Vessel["Persistent Vessel (Immutable Across Swaps)"]
+        Compiler["Contract Compiler: IDENTITY, SOUL, SYSTEM, AGENTS"]
+        Shield["Anti-Bleed Identity Shield"]
+        Sessions["SessionStore: Unified History & Token Ledger"]
+    end
+
+    Router["PowerSourceRouter (Hot-Swap & Auto-Failover)"]
+    Vessel <--> Router
+
+    Router --> Claude["Anthropic (Claude 3.5 / 4)"]
+    Router --> Gemini["Google (Gemini 2.0)"]
+    Router --> OpenAI["OpenAI / Compatible APIs"]
+    Router --> Ollama["Ollama (Local Weights)"]
 ```
 
 ---
@@ -73,11 +77,29 @@ Compile your markdown contracts and inspect token footprint:
 npx saf compile --config ./my-agent/agent.config.json
 ```
 
-List registered power sources and hot-swap the active model:
+List registered power sources, inspect readiness with `doctor`, and hot-swap the active model:
 
 ```bash
 npx saf providers --config ./my-agent/agent.config.json
+npx saf doctor --config ./my-agent/agent.config.json
 npx saf swap google --config ./my-agent/agent.config.json
+```
+
+Sample `saf doctor` output:
+
+```text
+=== Swappable Agent Diagnostics ===
+Agent:          CoPilot
+Active Core:    anthropic
+Fallback Order: google -> openai -> ollama
+Anti-Bleed:     enabled
+Contracts:      identity, agents (~165 tokens)
+
+Provider Readiness:
+  - anthropic (claude-3-5-sonnet-20241022): [KEY SET]
+  - google (gemini-2.0-flash): [KEY SET]
+  - openai (gpt-4o): [MISSING OPENAI_API_KEY]
+  - ollama (qwen2.5-coder:32b): [READY]
 ```
 
 Run a session turn through the active power source:
@@ -150,6 +172,12 @@ Beyond the core SDK, `blueprints/` documents the complete 10-part architecture f
 8. [08 - UI Components & Layout](blueprints/08-ui-components-and-layout.md)
 9. [09 - Core Orchestration Loop](blueprints/09-core-orchestration-loop.md)
 10. [10 - CLI Surface & Build Order](blueprints/10-cli-surface-and-build-order.md)
+
+---
+
+## Companion Project
+
+Runs seamlessly alongside [Reach](https://github.com/Amanuel-Tesfaye-R/reach) (`@amanuel-tesfaye-r/reach`), keeping your desktop AI agent and workstation reachable from Telegram 24/7.
 
 ---
 

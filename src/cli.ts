@@ -1,10 +1,27 @@
 #!/usr/bin/env node
 import fs from "node:fs";
 import path from "node:path";
+import { resolveApiKey } from "./adapters/base.js";
+import { OllamaAdapter } from "./adapters/ollama.js";
 import { compileContracts, loadContractsFromDisk } from "./contract-compiler.js";
 import { PowerSourceRouter } from "./router.js";
 import { SessionStore } from "./session-store.js";
 import type { AgentConfig } from "./types.js";
+
+const useColor = Boolean(process.stdout.isTTY);
+const ansi = {
+  bold: (s: string) => (useColor ? `\x1b[1m${s}\x1b[0m` : s),
+  dim: (s: string) => (useColor ? `\x1b[2m${s}\x1b[0m` : s),
+  green: (s: string) => (useColor ? `\x1b[32m${s}\x1b[0m` : s),
+  cyan: (s: string) => (useColor ? `\x1b[36m${s}\x1b[0m` : s),
+  yellow: (s: string) => (useColor ? `\x1b[33m${s}\x1b[0m` : s),
+};
+
+const DEFAULT_ENV_MAP: Record<string, string> = {
+  anthropic: "ANTHROPIC_API_KEY",
+  google: "GEMINI_API_KEY",
+  openai: "OPENAI_API_KEY",
+};
 
 function loadConfig(configPath: string): { config: AgentConfig; baseDir: string } {
   const abs = path.resolve(configPath);
@@ -103,9 +120,46 @@ function cmdCompile(configPath: string): void {
 function cmdProviders(configPath: string): void {
   const { config, baseDir } = loadConfig(configPath);
   const router = new PowerSourceRouter(config, { baseDir });
+  console.log(ansi.bold(`Power Sources (${config.agent.name}):`));
   for (const p of router.listProviders()) {
-    const marker = p.active ? "* " : "  ";
-    console.log(`${marker}${p.id} (${p.kind} -> ${p.model})`);
+    const marker = p.active ? ansi.green("* ") : "  ";
+    const status = p.active ? ansi.green(" [active]") : "";
+    console.log(`${marker}${ansi.cyan(p.id)} (${p.kind} -> ${p.model})${status}`);
+  }
+}
+
+async function cmdDoctor(configPath: string): Promise<void> {
+  const { config, baseDir } = loadConfig(configPath);
+  console.log(ansi.bold("=== Swappable Agent Diagnostics ==="));
+  console.log(`Agent:          ${ansi.cyan(config.agent.name)}`);
+  console.log(`Active Core:    ${ansi.green(config.agent.activeProvider)}`);
+  console.log(`Fallback Order: ${(config.agent.fallbackOrder || []).join(" -> ") || "(none)"}`);
+  console.log(`Anti-Bleed:     ${config.agent.antiBleedShield !== false ? "enabled" : "disabled"}`);
+
+  const contracts = config.agent.contracts
+    ? loadContractsFromDisk(config.agent.contracts, baseDir, false)
+    : {};
+  const loadedKeys = Object.keys(contracts);
+  const compiled = compileContracts(contracts, {
+    agentName: config.agent.name,
+    antiBleedShield: config.agent.antiBleedShield ?? true,
+  });
+  console.log(
+    `Contracts:      ${loadedKeys.length > 0 ? loadedKeys.join(", ") : "none"} (~${compiled.estimatedTokens} tokens)`
+  );
+
+  console.log("\nProvider Readiness:");
+  for (const [id, pCfg] of Object.entries(config.agent.providers)) {
+    if (pCfg.kind === "ollama") {
+      const probe = await new OllamaAdapter(id, pCfg).healthCheck();
+      const tag = probe.ok ? ansi.green("[READY]") : ansi.yellow(`[OFFLINE: ${probe.detail}]`);
+      console.log(`  - ${id} (${pCfg.model}): ${tag}`);
+    } else {
+      const hasKey = Boolean(resolveApiKey(pCfg, DEFAULT_ENV_MAP[pCfg.kind]));
+      const envHint = pCfg.apiKeyEnv || DEFAULT_ENV_MAP[pCfg.kind] || "API_KEY";
+      const tag = hasKey ? ansi.green("[KEY SET]") : ansi.yellow(`[MISSING ${envHint}]`);
+      console.log(`  - ${id} (${pCfg.model}): ${tag}`);
+    }
   }
 }
 
@@ -149,6 +203,7 @@ async function main(): Promise<void> {
         "  saf init [dir]                  Scaffold agent.config.json and starter contracts",
         "  saf compile [--config path]     Compile contracts and show token estimate",
         "  saf providers [--config path]   List configured cognitive power sources",
+        "  saf doctor [--config path]      Verify contracts, API keys, and local endpoints",
         "  saf swap <id> [--config path]   Hot-swap the active provider in config",
         "  saf ask <prompt> [--session id] Send a prompt via the active power source",
       ].join("\n")
@@ -165,6 +220,9 @@ async function main(): Promise<void> {
       break;
     case "providers":
       cmdProviders(configPath);
+      break;
+    case "doctor":
+      await cmdDoctor(configPath);
       break;
     case "swap":
       if (!args[1]) throw new Error("Usage: saf swap <provider-id>");
